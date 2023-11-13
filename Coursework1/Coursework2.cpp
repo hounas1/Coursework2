@@ -6,6 +6,8 @@
 #include "Headers.h"
 #include "ICS0017DataSource.h"
 
+using namespace std;
+
 #define TRUE		1
 #define FALSE		0
 
@@ -20,18 +22,12 @@ public:
 	DataStructure(char *pFilename);
 	~DataStructure();
 	DataStructure(const DataStructure &original);
-private:
-	HEADER_E* InitStruct();
+public:
+	void PrintDataStructure(HEADER_E *pStruct);
 };
 
-HEADER_E* InitStruct() {
-	HEADER_E* pStructTemp = GetStruct5(10, 30);
-
-	return pStructTemp;
-}
-
 DataStructure::DataStructure() {
-	pStruct = InitStruct();
+	pStruct = GetStruct5(10, 30);
 }
 
 
@@ -49,11 +45,31 @@ DataStructure::DataStructure(const DataStructure &original) {
 
 }
 
+void DataStructure::PrintDataStructure(HEADER_E *pStruct){
+	HEADER_E* pStructTemp = pStruct;
+	int i = 1;
+	while (pStructTemp != NULL) {
+		cout << "HEADER:" << pStructTemp->cBegin << "\n";
+		void** ppItem = pStructTemp->ppItems;
+		for (int j = 0; j < 25; j++) {
+			ITEM10* pItem = (ITEM10*)ppItem[j];
+			while (pItem != NULL) {
+				cout << " | " << i << ") " << pItem->pID << pItem->Code;
+				cout << " " << pItem->Date.Day << "/" << pItem->Date.pMonth << "/" << pItem->Date.Year << "\n";
+				pItem = pItem->pNext;
+				i++;
+			}
+		}
+		pStructTemp = pStructTemp->pNext;
+	}
+}
+
 
 
 int main(){
 	DataStructure pStructure;
 
+	pStructure.PrintDataStructure(pStructure.pStruct);
 
 	return 0;
 }
