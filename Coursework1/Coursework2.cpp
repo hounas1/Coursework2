@@ -206,20 +206,20 @@ int main(){
 	cout << "||" << pDataStructure.GetItemsNumber() << " items in datastructure||" << endl;
 	
 	/// 
-	/// TEST CASE 5
+	/// TEST CASE 5 AND 6
 	/// 
-	char srch[] = "Light Cyan";
-	cout << endl <<  "||Searching for item: " << srch << "||" << endl;
-	ITEM10* pSrchItem = pDataStructure.GetItem(srch);
-	if (pSrchItem != NULL) {
-		cout << "Item found: ";
-		cout << pSrchItem->pID << "|" << pSrchItem->Code << endl;
+	char srch[][20] = { "Light Cyan", "X X" };
+	for (int i = 0; i < 2; i++) {
+		ITEM10* pSrchItem = pDataStructure.GetItem(srch[i]);
+		cout << endl << "||Searching for item: " << srch[i] << "||" << endl;
+		if (pSrchItem != NULL) {
+			cout << "Item found: ";
+			cout << pSrchItem->pID << "|" << pSrchItem->Code << endl;
+		}
+		else {
+			cout << "Item not found" << endl;
+		}
 	}
-	else {
-		cout << "Item not found" << endl;
-	}
-
-
 
 	return 0;
 }
