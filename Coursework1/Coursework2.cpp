@@ -20,6 +20,8 @@ public:
 public:
 	DataStructure();
 	~DataStructure();
+	int GetItemsNumber();
+	ITEM10* GetItem(char* pID);
 	//DataStructure(char *pFilename);
 	friend ostream& operator<<(ostream& ostr, const DataStructure& str);
 	void operator+=(ITEM10* pNewItem);
@@ -29,6 +31,47 @@ public:
 
 DataStructure::DataStructure() {
 	pStruct = new HEADER_E [26]();
+}
+
+ITEM10* DataStructure::GetItem(char* pID) {
+	HEADER_E* pHeader = pStruct;
+	while (pHeader != nullptr) {
+		if (pHeader->ppItems != nullptr) {
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				while (pItem != nullptr) {
+					if (strcmp(pItem->pID, pID) == 0) {
+						return pItem;
+					}
+					pItem = pItem->pNext;
+				}
+			}
+		}
+		pHeader = pHeader->pNext;
+	}
+	return NULL;
+}
+
+int DataStructure::GetItemsNumber() {
+	int n = 0;
+	HEADER_E* pHeader = pStruct;
+	if (!pStruct) {
+		cout << "Data Structure is empty!" << endl;
+		return n;
+	}
+	while (pHeader != nullptr) {
+		if (pHeader->ppItems != nullptr) {
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				while (pItem != nullptr) {
+					n++;
+					pItem = pItem->pNext;
+				}
+			}
+		}
+		pHeader = pHeader->pNext;
+	}
+	return n;
 }
 
 ostream& operator<<(ostream& ostr, const DataStructure& str) {
@@ -139,13 +182,44 @@ DataStructure::~DataStructure() {
 
 
 int main(){
+	/// 
+	/// TEST CASE 1
+	/// 
 	DataStructure pDataStructure;
+
+	/// 
+	/// TEST CASE 2
+	/// 
 	for (int i = 0; i < 10; i++) {
 		ITEM10* item = (ITEM10*)GetItem(10);
 		pDataStructure += item;
 	}
+	/// 
+	/// TEST CASE 3
+	/// 
 	cout << endl << "||DATASTRUCTURE AFTER ADDING 10 ITEMS||" << endl << endl;
 	cout << pDataStructure << endl << endl;
+
+	/// 
+	/// TEST CASE 4
+	/// 
+	cout << "||" << pDataStructure.GetItemsNumber() << " items in datastructure||" << endl;
+	
+	/// 
+	/// TEST CASE 5
+	/// 
+	char srch[] = "Light Cyan";
+	cout << endl <<  "||Searching for item: " << srch << "||" << endl;
+	ITEM10* pSrchItem = pDataStructure.GetItem(srch);
+	if (pSrchItem != NULL) {
+		cout << "Item found: ";
+		cout << pSrchItem->pID << "|" << pSrchItem->Code << endl;
+	}
+	else {
+		cout << "Item not found" << endl;
+	}
+
+
 
 	return 0;
 }
