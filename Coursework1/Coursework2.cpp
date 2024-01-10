@@ -19,10 +19,11 @@ public:
 	HEADER_E* pStruct;
 public:
 	DataStructure();
+	~DataStructure();
 	//DataStructure(char *pFilename);
 	friend ostream& operator<<(ostream& ostr, const DataStructure& str);
 	void operator+=(ITEM10* pNewItem);
-	//~DataStructure();
+	
 	//DataStructure(const DataStructure &original);
 };
 
@@ -112,9 +113,24 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 //}
 //
 //
-//DataStructure::~DataStructure() {
-//
-//}
+DataStructure::~DataStructure() {
+	while (pStruct) {
+		HEADER_E* pHeader = pStruct;
+		pStruct = pStruct->pNext;
+		if (pHeader->ppItems) { //check if items are present
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = static_cast<ITEM10*>(pHeader->ppItems[i]);
+				while (pItem) {
+					ITEM10* pItemTemp = pItem->pNext; //save next item, to delete current
+					delete pItem;
+					pItem = pItemTemp;
+				}
+			}
+			delete[] pHeader->ppItems;
+		}
+		delete pHeader;
+	}
+}
 //
 //
 //DataStructure::DataStructure(const DataStructure &original) {
@@ -123,13 +139,12 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 
 
 int main(){
-	cout << " TEST 1 " << endl;
 	DataStructure pDataStructure;
-	cout << pDataStructure << endl << endl;
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 10; i++) {
 		ITEM10* item = (ITEM10*)GetItem(10);
 		pDataStructure += item;
 	}
+	cout << endl << "||DATASTRUCTURE AFTER ADDING 10 ITEMS||" << endl << endl;
 	cout << pDataStructure << endl << endl;
 
 	return 0;
