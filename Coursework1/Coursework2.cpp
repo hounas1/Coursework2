@@ -31,6 +31,7 @@ DataStructure::DataStructure() {
 }
 
 ostream& operator<<(ostream& ostr, const DataStructure& str) {
+	int n = 1;
 	HEADER_E* pHeader = str.pStruct;
 	if (!str.pStruct) {
 		cout << "Data Structure is empty!" << endl;
@@ -39,10 +40,11 @@ ostream& operator<<(ostream& ostr, const DataStructure& str) {
 	while (pHeader != nullptr) {
 		if (pHeader->ppItems != nullptr) {
 			for (int i = 0; i < 26; i++) {
-				//ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
-				ITEM10* pItem = (ITEM10*)pHeader->ppItems[i];
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				//ITEM10* pItem = (ITEM10*)pHeader->ppItems[i];
 				while (pItem != nullptr) {
-					ostr << i++ << " )" << pItem->pID << "|" << pItem->Code << "|";
+					ostr << n++ << ") "<< "[" << i++ << "]" << "[" << pHeader->cBegin << "] ";
+					ostr << pItem->pID << "|" << pItem->Code << "|";
 					ostr << pItem->Date.Day << "/" << pItem->Date.pMonth << "/" << pItem->Date.Year << endl;
 					pItem = pItem->pNext;
 				}
@@ -96,6 +98,7 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 	for (ITEM10* pItem = *ppItem; pItem != nullptr; pItem = pItem->pNext) {
 		if (strcmp(pItem->pID, pNewItem->pID) == 0) {
 			cout << "Item " << pNewItem->pID << " exists!" << endl;
+			return;
 		}
 	}
 
@@ -123,7 +126,7 @@ int main(){
 	cout << " TEST 1 " << endl;
 	DataStructure pDataStructure;
 	cout << pDataStructure << endl << endl;
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 50; i++) {
 		ITEM10* item = (ITEM10*)GetItem(10);
 		pDataStructure += item;
 	}
