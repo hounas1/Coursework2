@@ -133,8 +133,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Coursework2.cpp" />
+    <ClCompile Include="Datastructure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Datastructure.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="Headers.h" />
     <ClInclude Include="ICS0017DataSource.h" />
