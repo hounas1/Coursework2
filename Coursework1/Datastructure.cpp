@@ -1,9 +1,5 @@
 #include "Datastructure.h"
 
-DataStructure::DataStructure() {
-	pStruct = new HEADER_E [26]();
-}
-
 char FindSecondLetter(char* pNewItemID) {
 	char* pSecondId = (char*)' ', secondChar;
 	char* pSpace = strchr(pNewItemID, ' '); // find the second word of ID
@@ -15,23 +11,55 @@ char FindSecondLetter(char* pNewItemID) {
 	return secondChar;
 }
 
-ITEM10* DataStructure::GetItem(char* pID) {
-	HEADER_E* pHeader = pStruct;
-	while (pHeader != nullptr) {
-		if (pHeader->ppItems != nullptr) {
+DataStructure::DataStructure() {
+	pStruct = new HEADER_E [26]();
+}
+
+DataStructure::~DataStructure() {
+	while (pStruct) {
+		HEADER_E* pHeader = pStruct;
+		pStruct = pStruct->pNext;
+		if (pHeader->ppItems) { //check if items are present
 			for (int i = 0; i < 26; i++) {
-				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				ITEM10* pItem = static_cast<ITEM10*>(pHeader->ppItems[i]);
+				while (pItem) {
+					ITEM10* pItemTemp = pItem->pNext; //save next item, to delete current
+					delete pItem;
+					pItem = pItemTemp;
+				}
+			}
+			delete[] pHeader->ppItems;
+		}
+		delete pHeader;
+	}
+}
+
+DataStructure::DataStructure(const DataStructure& Original) {
+	HEADER_E* pOriginalHeader = Original.pStruct;
+	HEADER_E* pNewHeader = pOriginalHeader;
+	while (pNewHeader) {
+		if (pNewHeader->ppItems != nullptr) {
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pNewHeader->ppItems[i]);
 				while (pItem != nullptr) {
-					if (strcmp(pItem->pID, pID) == 0) {
-						return pItem;
-					}
+					ITEM10* pNewItem = new ITEM10;
+					pNewItem->pID = pItem->pID;
+					pNewItem->Code = pItem->Code;
+
+					pNewItem->Date.Day = pItem->Date.Day;
+					pNewItem->Date.pMonth = pItem->Date.pMonth;
+					pNewItem->Date.Year = pItem->Date.Year;
+
+					pNewItem->pNext = nullptr;
+
+					*this += pNewItem;
+
 					pItem = pItem->pNext;
 				}
 			}
 		}
-		pHeader = pHeader->pNext;
+		pNewHeader = pNewHeader->pNext;
 	}
-	return NULL;
 }
 
 int DataStructure::GetItemsNumber() {
@@ -56,29 +84,23 @@ int DataStructure::GetItemsNumber() {
 	return n;
 }
 
-ostream& operator<<(ostream& ostr, const DataStructure& str) {
-	int n = 1;
-	HEADER_E* pHeader = str.pStruct;
-	if (!str.pStruct) {
-		cout << "Data Structure is empty!" << endl;
-		return ostr;
-	}
+ITEM10* DataStructure::GetItem(char* pID) {
+	HEADER_E* pHeader = pStruct;
 	while (pHeader != nullptr) {
-		if (pHeader->ppItems != nullptr) {
+		if (pHeader->ppItems != nullptr && pHeader->cBegin == *pID) {
 			for (int i = 0; i < 26; i++) {
 				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
-				//ITEM10* pItem = (ITEM10*)pHeader->ppItems[i];
 				while (pItem != nullptr) {
-					ostr << n++ << ") "<< "[" << i++ << "]" << "[" << pHeader->cBegin << "] ";
-					ostr << pItem->pID << "|" << pItem->Code << "|";
-					ostr << pItem->Date.Day << "/" << pItem->Date.pMonth << "/" << pItem->Date.Year << endl;
+					if (strcmp(pItem->pID, pID) == 0) {
+						return pItem;
+					}
 					pItem = pItem->pNext;
 				}
 			}
 		}
 		pHeader = pHeader->pNext;
 	}
-	return ostr;
+	return NULL;
 }
 
 void DataStructure::operator+=(ITEM10* pNewItem) {
@@ -122,21 +144,33 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 }
 
 
-DataStructure::~DataStructure() {
-	while (pStruct) {
-		HEADER_E* pHeader = pStruct;
-		pStruct = pStruct->pNext;
-		if (pHeader->ppItems) { //check if items are present
+ostream& operator<<(ostream& ostr, const DataStructure& str) {
+	int n = 1;
+	HEADER_E* pHeader = str.pStruct;
+	if (!str.pStruct) {
+		cout << "Data Structure is empty!" << endl;
+		return ostr;
+	}
+	while (pHeader != nullptr) {
+		if (pHeader->ppItems != nullptr) {
 			for (int i = 0; i < 26; i++) {
-				ITEM10* pItem = static_cast<ITEM10*>(pHeader->ppItems[i]);
-				while (pItem) {
-					ITEM10* pItemTemp = pItem->pNext; //save next item, to delete current
-					delete pItem;
-					pItem = pItemTemp;
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				//ITEM10* pItem = (ITEM10*)pHeader->ppItems[i];
+				while (pItem != nullptr) {
+					ostr << n++ << ") "<< "[" << i++ << "]" << "[" << pHeader->cBegin << "] ";
+					ostr << pItem->pID << "|" << pItem->Code << "|";
+					ostr << pItem->Date.Day << "/" << pItem->Date.pMonth << "/" << pItem->Date.Year << endl;
+					pItem = pItem->pNext;
 				}
 			}
-			delete[] pHeader->ppItems;
 		}
-		delete pHeader;
+		pHeader = pHeader->pNext;
 	}
+	return ostr;
 }
+
+
+
+
+
+

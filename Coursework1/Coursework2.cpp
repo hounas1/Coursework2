@@ -41,5 +41,12 @@ int main(){
 		}
 	}
 
+	/// 
+	/// TEST CASE 7
+	/// 
+	DataStructure pDataStructureCopy = pDataStructure;
+	cout << endl << "||Copy of original datastructure||" << endl;
+	cout << pDataStructureCopy << endl;
+
 	return 0;
 }
