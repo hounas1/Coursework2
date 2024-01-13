@@ -31,5 +31,7 @@ public:
 
 	void operator+=(ITEM10* pNewItem); //Adds new item into data structure
 
+	void operator-=(char* pID); //removes item with specified ID
+
 	friend ostream& operator<<(ostream& ostr, const DataStructure& str); //prints all items
 };

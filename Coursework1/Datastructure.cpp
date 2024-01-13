@@ -108,7 +108,7 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 		cout << "Invalid item or ID" << endl;
 		return;
 	}
-
+	
 	pNewItem->pNext = NULL;
 	char firstChar = *(pNewItem->pID);
 	char secondChar = FindSecondLetter(pNewItem->pID);
@@ -141,6 +141,59 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 
 	pNewItem->pNext = *ppItem;
 	*ppItem = pNewItem;
+}
+
+void DataStructure::operator-=(char* pID) {
+	HEADER_E* pHeader = pStruct;
+	int n;
+	int itemFound = 0;
+	int itemCounter = 0;
+	int itemLinked = 0;
+	ITEM10* pItem;
+	ITEM10* pItemPrevious;
+	while (pHeader) {
+		if (pHeader->ppItems != nullptr && pHeader->cBegin == *pID) {
+			for (int i = 0; i < 26; i++) {
+				pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				itemFound = 0;
+				itemCounter = 0;
+				itemLinked = 0;
+				while (pItem != nullptr) {
+					itemCounter++;
+					pItemPrevious = pItem;
+					if (strcmp(pItem->pID, pID) == 0) { //item found
+						n = i;
+						itemFound = 1;
+						if (pItemPrevious->pNext == pItem) {
+							itemLinked = 1;
+						}
+					}
+					if (!itemFound) {
+						pItemPrevious = pItem;
+					}
+					pItem = pItem->pNext;
+				}
+			}
+			if (itemFound) {
+				if (itemLinked) { //item is linked
+					if (pItemPrevious->pNext->pNext != nullptr) { //item to remove has next link
+						pItemPrevious->pNext = pItemPrevious->pNext->pNext;
+					}
+					else {
+						pItemPrevious->pNext = nullptr;
+					}
+					delete pItemPrevious->pNext;
+				}
+				else {
+					delete pHeader->ppItems[n];
+					pHeader->ppItems[n] = nullptr;
+				}
+				return;
+			}
+		}
+		pHeader = pHeader->pNext;
+	}
+	cout << "Item " << pID << " not found" << endl;
 }
 
 
