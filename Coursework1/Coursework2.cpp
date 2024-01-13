@@ -48,7 +48,14 @@ int main(){
 	cout << endl << "||Copy of original datastructure||" << endl;
 	cout << pDataStructureCopy << endl;
 
-
+	/// 
+	/// TEST CASE 8
+	/// 
+	cout << endl << "||REMOVING 3 Items||" << endl;
+	pDataStructure -= (char*)"Banana Mania";
+	pDataStructure -= (char*)"Persian Green";
+	pDataStructure -= (char*)"Vegas Gold";
+	cout << pDataStructure << endl;
 
 	return 0;
 }
