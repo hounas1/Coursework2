@@ -86,8 +86,6 @@ int main(){
 	cout << endl << "||DATASTRUCTURE FROM FILE||" << endl;
 	cout << pDataStructureFile << endl;
 
-	cout << endl << pDataStructure << endl;
-
 	cout << endl << "||COMPARING INITIAL AND FILE DATASTRUCTURES||" << endl;
 	if (pDataStructure == pDataStructureFile) {
 		cout << "Datastructures are equal" << endl;
@@ -96,7 +94,12 @@ int main(){
 		cout << "Datastructures are not equal" << endl;
 	}
 
-
+	///
+	/// TEST CASE 12
+	/// 
+	cout << endl << "||COPYING COPIED DATASTRUCTURE TO FILE DATASTRUCTURE||" << endl;
+	pDataStructureFile = pDataStructureCopy;
+	cout << pDataStructureFile << endl;
 
 	return 0;
 }

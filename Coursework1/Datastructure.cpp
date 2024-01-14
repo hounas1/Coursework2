@@ -260,9 +260,48 @@ void DataStructure::operator-=(char* pID) {
 
 
 DataStructure& DataStructure::operator=(const DataStructure& Right) {
+	while (pStruct) {
+		HEADER_E* pHeader = pStruct;
+		pStruct = pStruct->pNext;
+		if (pHeader->ppItems) { //check if items are present
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = static_cast<ITEM10*>(pHeader->ppItems[i]);
+				while (pItem) {
+					ITEM10* pItemTemp = pItem->pNext; //save next item, to delete current
+					delete pItem;
+					pItem = pItemTemp;
+				}
+			}
+			delete[] pHeader->ppItems;
+		}
+		delete pHeader;
+	}
 
+	HEADER_E* pHeaderRight = Right.pStruct;
+	HEADER_E* pHeaderNew = pHeaderRight;
+	while (pHeaderNew) {
+		if (pHeaderNew->ppItems != nullptr) {
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeaderNew->ppItems[i]);
+				while (pItem != nullptr) {
+					ITEM10* pNewItem = new ITEM10;
+					pNewItem->pID = pItem->pID;
+					pNewItem->Code = pItem->Code;
 
+					pNewItem->Date.Day = pItem->Date.Day;
+					pNewItem->Date.pMonth = pItem->Date.pMonth;
+					pNewItem->Date.Year = pItem->Date.Year;
 
+					pNewItem->pNext = nullptr;
+
+					*this += pNewItem;
+
+					pItem = pItem->pNext;
+				}
+			}
+		}
+		pHeaderNew = pHeaderNew->pNext;
+	}
 	return *this;
 }
 
@@ -362,9 +401,4 @@ ostream& operator<<(ostream& ostr, const DataStructure& str) {
 	}
 	return ostr;
 }
-
-
-
-
-
 
