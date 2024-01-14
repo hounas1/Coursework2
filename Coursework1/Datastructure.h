@@ -33,5 +33,7 @@ public:
 
 	void operator-=(char* pID); //removes item with specified ID
 
+	int operator==(DataStructure& Other); //compares two datastructures
+
 	friend ostream& operator<<(ostream& ostr, const DataStructure& str); //prints all items
 };

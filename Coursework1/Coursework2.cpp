@@ -17,7 +17,7 @@ int main(){
 	/// 
 	/// TEST CASE 3
 	/// 
-	cout << endl << "||DATASTRUCTURE AFTER ADDING 10 ITEMS||" << endl << endl;
+	cout << endl << "||DATASTRUCTURE AFTER ADDING 10 ITEMS||" << endl;
 	cout << pDataStructure << endl << endl;
 
 	/// 
@@ -45,7 +45,7 @@ int main(){
 	/// TEST CASE 7
 	/// 
 	DataStructure pDataStructureCopy = pDataStructure;
-	cout << endl << "||Copy of original datastructure||" << endl;
+	cout << endl << "||COPY OF ORIGINAL DATASTRUCTURE||" << endl;
 	cout << pDataStructureCopy << endl;
 
 	/// 
@@ -56,6 +56,21 @@ int main(){
 	pDataStructure -= (char*)"Persian Green";
 	pDataStructure -= (char*)"Vegas Gold";
 	cout << pDataStructure << endl;
+
+	/// 
+	/// TEST CASE 9
+	/// 
+	cout << endl << "||COMPARING ORIGINAL AND COPY DATASTRUCTURES||" << endl;
+	if (pDataStructure == pDataStructureCopy) {
+		cout <<  "Datastructures are equal" << endl;
+	}
+	else {
+		cout << "Datastructures are not equal" << endl;
+	}
+
+	/// 
+	/// TEST CASE 10
+	/// 
 
 	return 0;
 }

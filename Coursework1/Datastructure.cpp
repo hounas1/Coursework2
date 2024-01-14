@@ -148,8 +148,10 @@ void DataStructure::operator-=(char* pID) {
 	while (pHeader) {
 		if (pHeader->ppItems != nullptr && pHeader->cBegin == *pID) {
 			for (int i = 0; i < 26; i++) {
+				int itemCounter = 0;
 				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
 				while (pItem != nullptr) {
+					itemCounter++;
 					ITEM10* pItemPrevious = nullptr;
 					if (strcmp(pItem->pID, pID) == 0) { //item found
 						if (pItemPrevious != nullptr) { //item is linked
@@ -159,6 +161,9 @@ void DataStructure::operator-=(char* pID) {
 						else { //item is not linked
 							pHeader->ppItems[i] = nullptr;
 							delete pItem;
+							//if (itemCounter == 1) { //last item in header
+							//	pHeader->ppItems = nullptr;
+							//}
 						}
 						return;
 					}
@@ -170,6 +175,48 @@ void DataStructure::operator-=(char* pID) {
 		pHeader = pHeader->pNext;
 	}
 	cout << "Item " << pID << " not found" << endl;
+}
+
+int DataStructure::operator==(DataStructure& Other) {
+	HEADER_E* pOriginal = this->pStruct->pNext;
+	HEADER_E* pOther = Other.pStruct;
+
+
+	while (pOriginal != nullptr && pOther != nullptr) {
+		if (pOriginal->ppItems != nullptr && pOther->ppItems != nullptr) {
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItemOriginal = reinterpret_cast<ITEM10*>(pOriginal->ppItems[i]);
+				ITEM10* pItemOther = reinterpret_cast<ITEM10*>(pOther->ppItems[i]);
+				while (pItemOriginal != nullptr && pItemOther != nullptr) {
+					if (!strcmp(pItemOriginal->pID, pItemOther->pID) &&
+						pItemOriginal->Code == pItemOther->Code &&
+						pItemOriginal->Date.Day == pItemOther->Date.Day &&
+						!strcmp(pItemOriginal->Date.pMonth, pItemOther->Date.pMonth) &&
+						pItemOriginal->Date.Year == pItemOther->Date.Year) {
+					}
+					else { //item does not have same elements
+						return 0;
+					}
+					pItemOriginal = pItemOriginal->pNext;
+					pItemOther = pItemOther->pNext;
+				}
+				if (pItemOriginal != nullptr || pItemOther != nullptr) {
+					return 0;
+				}
+			}	
+		}
+		if ((pOriginal->ppItems != nullptr) != (pOther->ppItems != nullptr)) {
+				return 0;
+		}
+		pOriginal = pOriginal->pNext;
+		pOther = pOther->pNext;
+	}
+
+	if (pOriginal != nullptr || pOther != nullptr) { //one datastrure has more headers
+		return 0;
+	}
+	
+	return 1;
 }
 
 
