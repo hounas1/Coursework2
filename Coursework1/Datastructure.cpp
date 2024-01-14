@@ -135,48 +135,6 @@ ITEM10* DataStructure::GetItem(char* pID) {
 	return NULL;
 }
 
-//void DataStructure::operator+=(ITEM10* pNewItem) {
-//	if (!pNewItem || !pNewItem->pID) {
-//		cout << "Invalid item or ID" << endl;
-//		return;
-//	}
-//	
-//	pNewItem->pNext = NULL;
-//	char firstChar = *(pNewItem->pID);
-//	char secondChar = FindSecondLetter(pNewItem->pID);
-//	
-//	HEADER_E** ppCurrentStruct = &pStruct;
-//	
-//	while (*ppCurrentStruct && (*ppCurrentStruct)->cBegin != firstChar) {
-//		ppCurrentStruct = &(*ppCurrentStruct)->pNext;
-//	}
-//
-//	//if header is not found
-//	if (*ppCurrentStruct == NULL) {
-//		*ppCurrentStruct = new HEADER_E{
-//			new void* [26](),
-//			firstChar,
-//			NULL
-//		};
-//	}
-//	//create new pointer to correct header
-//	HEADER_E* pNewStruct = *ppCurrentStruct;
-//
-//	int index = secondChar - 'A';
-//	ITEM10** ppItem = reinterpret_cast<ITEM10**>(&pNewStruct->ppItems[index]);
-//
-//	//check if item already exists
-//	for (ITEM10* pItem = *ppItem; pItem != nullptr; pItem = pItem->pNext) {
-//		if (strcmp(pItem->pID, pNewItem->pID) == 0) {
-//			cout << "Item " << pNewItem->pID << " exists!" << endl;
-//			return;
-//		}
-//	}
-//
-//	pNewItem->pNext = *ppItem;
-//	*ppItem = pNewItem;
-//}
-
 void DataStructure::operator+=(ITEM10* pNewItem) {
 	if (!pNewItem || !pNewItem->pID) {
 		cout << "Invalid item or ID" << endl;
