@@ -1,12 +1,14 @@
 
 #include "Datastructure.h"
-#include <filesystem>
 
 int main(){
 	/// 
 	/// TEST CASE 1
 	/// 
 	DataStructure pDataStructure;
+
+	cout << endl << "||CREATED EMPTY DATASTRUCTURE||" << endl;
+	cout << pDataStructure << endl;
 
 	/// 
 	/// TEST CASE 2
@@ -72,8 +74,27 @@ int main(){
 	/// 
 	/// TEST CASE 10
 	///
-	char filepath[] = "DataFile.bin";
-	pDataStructure.Write(filepath);
+	cout << endl << "||COPYING DATASTRUCTURE INTO BINARY FILE||" << endl;
+	char filename[] = "DataFile.bin";
+	pDataStructure.Write(filename);
+
+	///
+	/// TEST CASE 11
+	/// 
+	cout << endl << "||COPYING DATASTRUCTURE FROM BINARY FILE||" << endl;
+	DataStructure pDataStructureFile(filename);
+	cout << endl << "||DATASTRUCTURE FROM FILE||" << endl;
+	cout << pDataStructureFile << endl;
+
+	cout << endl << pDataStructure << endl;
+
+	cout << endl << "||COMPARING INITIAL AND FILE DATASTRUCTURES||" << endl;
+	if (pDataStructure == pDataStructureFile) {
+		cout << "Datastructures are equal" << endl;
+	}
+	else {
+		cout << "Datastructures are not equal" << endl;
+	}
 
 	return 0;
 }

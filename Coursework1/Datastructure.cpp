@@ -12,7 +12,39 @@ char FindSecondLetter(char* pNewItemID) {
 }
 
 DataStructure::DataStructure() {
-	pStruct = new HEADER_E [26]();
+	pStruct = new HEADER_E[26]();
+}
+
+DataStructure::DataStructure(char* pFilename) {
+	fstream file;
+	file.open(pFilename, fstream::in | fstream::binary);
+
+	if (!file.good()) {
+		cout << "Opening file failed" << endl;
+		return;
+	}
+
+	string fileLine;
+	while (getline(file, fileLine)) {
+		ITEM10* pItem = new ITEM10;
+		if (fileLine.find(' ', 0) == string::npos){
+			return;
+		}
+		int pos1 = fileLine.find(' ', 0), pos2 = fileLine.find(' ', pos1 + 1), length = 0;
+		pItem->pID = new char[length = fileLine.substr(0, pos2).length() + 1];
+		strcpy_s(pItem->pID, length, fileLine.substr(0, pos2).c_str());
+		pos1 = fileLine.find(' ', pos2 + 1);
+		pItem->Code = stoul(fileLine.substr(pos2 + 1, pos1 - pos2), 0, 0);
+		pos2 = fileLine.find(' ', pos1 + 1);
+		pItem->Date.Day = stoi(fileLine.substr(pos1 + 1, pos2 - pos1), 0, 0);
+		pos1 = fileLine.find(' ', pos2 + 1);
+		pItem->Date.pMonth = new char[length = fileLine.substr(pos2 + 1, pos1 - pos2 - 1).length() + 1];
+		strcpy_s(pItem->Date.pMonth, length, fileLine.substr(pos2 + 1, pos1 - pos2 - 1).c_str());
+		pos2 = fileLine.find('\n', pos1 + 1); 
+		pItem->Date.Year = stoi(fileLine.substr(pos1 + 1, pos2 - pos1), 0, 0);
+		pItem->pNext = 0;
+		*this += pItem;
+	}
 }
 
 DataStructure::~DataStructure() {
@@ -103,21 +135,74 @@ ITEM10* DataStructure::GetItem(char* pID) {
 	return NULL;
 }
 
+//void DataStructure::operator+=(ITEM10* pNewItem) {
+//	if (!pNewItem || !pNewItem->pID) {
+//		cout << "Invalid item or ID" << endl;
+//		return;
+//	}
+//	
+//	pNewItem->pNext = NULL;
+//	char firstChar = *(pNewItem->pID);
+//	char secondChar = FindSecondLetter(pNewItem->pID);
+//	
+//	HEADER_E** ppCurrentStruct = &pStruct;
+//	
+//	while (*ppCurrentStruct && (*ppCurrentStruct)->cBegin != firstChar) {
+//		ppCurrentStruct = &(*ppCurrentStruct)->pNext;
+//	}
+//
+//	//if header is not found
+//	if (*ppCurrentStruct == NULL) {
+//		*ppCurrentStruct = new HEADER_E{
+//			new void* [26](),
+//			firstChar,
+//			NULL
+//		};
+//	}
+//	//create new pointer to correct header
+//	HEADER_E* pNewStruct = *ppCurrentStruct;
+//
+//	int index = secondChar - 'A';
+//	ITEM10** ppItem = reinterpret_cast<ITEM10**>(&pNewStruct->ppItems[index]);
+//
+//	//check if item already exists
+//	for (ITEM10* pItem = *ppItem; pItem != nullptr; pItem = pItem->pNext) {
+//		if (strcmp(pItem->pID, pNewItem->pID) == 0) {
+//			cout << "Item " << pNewItem->pID << " exists!" << endl;
+//			return;
+//		}
+//	}
+//
+//	pNewItem->pNext = *ppItem;
+//	*ppItem = pNewItem;
+//}
+
 void DataStructure::operator+=(ITEM10* pNewItem) {
 	if (!pNewItem || !pNewItem->pID) {
 		cout << "Invalid item or ID" << endl;
 		return;
 	}
-	
+
 	pNewItem->pNext = NULL;
 	char firstChar = *(pNewItem->pID);
 	char secondChar = FindSecondLetter(pNewItem->pID);
-	 
+
+	// Check if the pStruct's pItems are nullptr
+	if (pStruct != nullptr && pStruct->ppItems == nullptr) {
+		// Replace pStruct with the new header
+		pStruct = new HEADER_E{
+			new void* [26](),
+			firstChar,
+			nullptr
+		};
+	}
+
 	HEADER_E** ppCurrentStruct = &pStruct;
 	while (*ppCurrentStruct && (*ppCurrentStruct)->cBegin != firstChar) {
 		ppCurrentStruct = &(*ppCurrentStruct)->pNext;
 	}
-	//if header is not found
+
+	// If header is not found, create a new header
 	if (*ppCurrentStruct == NULL) {
 		*ppCurrentStruct = new HEADER_E{
 			new void* [26](),
@@ -125,13 +210,14 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 			NULL
 		};
 	}
-	//create new pointer to correct header
+
+	// Create new pointer to correct header
 	HEADER_E* pNewStruct = *ppCurrentStruct;
 
 	int index = secondChar - 'A';
 	ITEM10** ppItem = reinterpret_cast<ITEM10**>(&pNewStruct->ppItems[index]);
 
-	//check if item already exists
+	// Check if item already exists
 	for (ITEM10* pItem = *ppItem; pItem != nullptr; pItem = pItem->pNext) {
 		if (strcmp(pItem->pID, pNewItem->pID) == 0) {
 			cout << "Item " << pNewItem->pID << " exists!" << endl;
@@ -139,37 +225,74 @@ void DataStructure::operator+=(ITEM10* pNewItem) {
 		}
 	}
 
+	// Insert the new item
 	pNewItem->pNext = *ppItem;
 	*ppItem = pNewItem;
 }
 
+
+
 void DataStructure::operator-=(char* pID) {
 	HEADER_E* pHeader = pStruct;
+	int itemCounter;
+	int itemFound = 0;
+	int itemIndex = 0;
 	while (pHeader) {
 		if (pHeader->ppItems != nullptr && pHeader->cBegin == *pID) {
+			itemCounter = 0;
 			for (int i = 0; i < 26; i++) {
-				int itemCounter = 0;
 				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				ITEM10* pItemPrevious = nullptr;
 				while (pItem != nullptr) {
 					itemCounter++;
-					ITEM10* pItemPrevious = nullptr;
 					if (strcmp(pItem->pID, pID) == 0) { //item found
-						if (pItemPrevious != nullptr) { //item is linked
+						itemFound = 1;
+						itemIndex = i; //we have to save the index, but not return yet,
+						//because we need to find out if the array has more items
+						if (pItemPrevious != nullptr) { //item is linked to last item
 							pItemPrevious->pNext = nullptr;
 							delete pItem;
+							return;
 						}
-						else { //item is not linked
-							pHeader->ppItems[i] = nullptr;
+						if (pItem->pNext != nullptr) { //item is linked to next item
+							pItemPrevious = pItem;
+							pHeader->ppItems[i] = pItemPrevious;
 							delete pItem;
-							//if (itemCounter == 1) { //last item in header
-							//	pHeader->ppItems = nullptr;
-							//}
+							return;
 						}
-						return;
 					}
 					pItemPrevious = pItem;
 					pItem = pItem->pNext;
 				}
+			}
+			if (itemFound) {
+				if (itemCounter > 1) { //not the last item in header
+					delete pHeader->ppItems[itemIndex];
+					pHeader->ppItems[itemIndex] = nullptr;
+				}
+				else { //last item in header, have to also delete the header
+					if (pHeader->pPrior == nullptr) { //first header
+						pHeader->pNext->pPrior = nullptr;
+						pStruct = pHeader->pNext;
+						delete pHeader->ppItems[itemIndex];
+						pHeader->ppItems[itemIndex] = nullptr;
+						delete pHeader;
+					}
+					else if (pHeader->pNext == nullptr) { //last header
+						pHeader->pPrior->pNext = nullptr;
+						delete pHeader->ppItems[itemIndex];
+						pHeader->ppItems[itemIndex] = nullptr;
+						delete pHeader;
+					}
+					else { //headers present on both sides
+						pHeader->pPrior->pNext = pHeader->pNext;
+						pHeader->pNext->pPrior = pHeader->pPrior;
+						delete pHeader->ppItems[itemIndex];
+						pHeader->ppItems[itemIndex] = nullptr;
+						delete pHeader;
+					}
+				}
+				return;
 			}
 		}
 		pHeader = pHeader->pNext;
@@ -177,8 +300,16 @@ void DataStructure::operator-=(char* pID) {
 	cout << "Item " << pID << " not found" << endl;
 }
 
+
+DataStructure& DataStructure::operator=(const DataStructure& Right) {
+
+
+
+	return *this;
+}
+
 int DataStructure::operator==(DataStructure& Other) {
-	HEADER_E* pOriginal = this->pStruct->pNext;
+	HEADER_E* pOriginal = pStruct;
 	HEADER_E* pOther = Other.pStruct;
 
 

@@ -4,7 +4,6 @@
 #include <string.h>
 #include <string>
 #include <fstream>
-#include <filesystem>
 #include "DateTime.h"
 #include "Items.h"
 #include "Headers.h"
@@ -24,6 +23,8 @@ public:
 public:
 	DataStructure(); //creates empty data structure
 
+	DataStructure(char* pFilename); //creates datastructure from a binary file
+
 	~DataStructure(); //deletes all items, vectors of pointers and headers
 
 	DataStructure(const DataStructure& Original); //Copy constructor
@@ -35,6 +36,8 @@ public:
 	void operator+=(ITEM10* pNewItem); //Adds new item into data structure
 
 	void operator-=(char* pID); //removes item with specified ID
+
+	DataStructure& operator=(const DataStructure& Right); //operator function for assignment
 
 	int operator==(DataStructure& Other); //compares two datastructures
 
