@@ -1,5 +1,6 @@
 
 #include "Datastructure.h"
+#include <filesystem>
 
 int main(){
 	/// 
@@ -70,7 +71,9 @@ int main(){
 
 	/// 
 	/// TEST CASE 10
-	/// 
+	///
+	char filepath[] = "DataFile.bin";
+	pDataStructure.Write(filepath);
 
 	return 0;
 }

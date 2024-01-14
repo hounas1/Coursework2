@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <string.h>
+#include <string>
+#include <fstream>
+#include <filesystem>
 #include "DateTime.h"
 #include "Items.h"
 #include "Headers.h"
@@ -34,6 +37,8 @@ public:
 	void operator-=(char* pID); //removes item with specified ID
 
 	int operator==(DataStructure& Other); //compares two datastructures
+
+	void Write(char* pFilename); //writes data structure into specified file
 
 	friend ostream& operator<<(ostream& ostr, const DataStructure& str); //prints all items
 };

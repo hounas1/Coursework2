@@ -219,6 +219,36 @@ int DataStructure::operator==(DataStructure& Other) {
 	return 1;
 }
 
+void DataStructure::Write(char* pFilename) {
+	fstream file;
+	file.open(pFilename, fstream::out | fstream::binary);
+	
+	if (!file.good()) {
+		cout << "Error opening file" << endl;
+		return;
+	}
+
+	string strBuf;
+	HEADER_E* pHeader = this->pStruct;
+
+	while (pHeader != nullptr) {
+		if (pHeader->ppItems != nullptr) {
+			for (int i = 0; i < 26; i++) {
+				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
+				while (pItem != nullptr) {
+					strBuf += string(pItem->pID) + ' ' + to_string(pItem->Code) + ' ' +
+						to_string(pItem->Date.Day) + ' ' + string(pItem->Date.pMonth) + ' ' +
+						to_string(pItem->Date.Year) + '\n';
+					pItem = pItem->pNext;
+				}	
+			}
+		}
+		pHeader = pHeader->pNext;
+	}
+	file.write(strBuf.c_str(), strBuf.length());
+	file.close();
+}
+
 
 ostream& operator<<(ostream& ostr, const DataStructure& str) {
 	int n = 1;
@@ -231,7 +261,6 @@ ostream& operator<<(ostream& ostr, const DataStructure& str) {
 		if (pHeader->ppItems != nullptr) {
 			for (int i = 0; i < 26; i++) {
 				ITEM10* pItem = reinterpret_cast<ITEM10*>(pHeader->ppItems[i]);
-				//ITEM10* pItem = (ITEM10*)pHeader->ppItems[i];
 				while (pItem != nullptr) {
 					ostr << n++ << ") "<< "[" << i++ << "]" << "[" << pHeader->cBegin << "] ";
 					ostr << pItem->pID << "|" << pItem->Code << "|";
