@@ -12,7 +12,7 @@ char FindSecondLetter(char* pNewItemID) {
 }
 
 DataStructure::DataStructure() {
-	pStruct = new HEADER_E[26]();
+	pStruct = new HEADER_E();
 }
 
 DataStructure::DataStructure(char* pFilename) {
